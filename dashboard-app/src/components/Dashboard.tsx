@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
@@ -17,7 +18,7 @@ type Transaction = {
   "Location": string;
 };
 
-const MetricCard = ({ title, value, change, sparklineData, format = 'number', prefix = '' }: any) => {
+const MetricCard = ({ title, value, change, format = 'number', prefix = '' }: any) => {
   return (
     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
        <div className="flex justify-between items-start mb-4 relative z-10">
@@ -34,22 +35,6 @@ const MetricCard = ({ title, value, change, sparklineData, format = 'number', pr
            {prefix}{format === 'number' ? value.toLocaleString(undefined, { maximumFractionDigits: 0 }) : value.toFixed(2)}
          </span>
        </div>
-       
-       {sparklineData && (
-         <div className="absolute bottom-0 left-0 right-0 h-16 opacity-30 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none">
-           <ResponsiveContainer width="100%" height="100%">
-             <AreaChart data={sparklineData}>
-               <defs>
-                 <linearGradient id={`gradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
-                   <stop offset="5%" stopColor="#1e3a8a" stopOpacity={0.3}/>
-                   <stop offset="95%" stopColor="#1e3a8a" stopOpacity={0}/>
-                 </linearGradient>
-               </defs>
-               <Area type="monotone" dataKey="value" stroke="#1e3a8a" strokeWidth={2} fill={`url(#gradient-${title.replace(/\s+/g, '')})`} isAnimationActive={true} />
-             </AreaChart>
-           </ResponsiveContainer>
-         </div>
-       )}
     </div>
   );
 };
@@ -91,7 +76,7 @@ export default function Dashboard() {
   const currentUniqueBuyers = filteredMonthly.reduce((sum: number, m: any) => sum + m.unique_buyers, 0);
   const currentAOV = currentTotalTransactions ? currentTotalRevenue / currentTotalTransactions : 0;
 
-  // Sparkline Data
+  // Formatted Data filtering
   const revenueSparkline = monthly_data.map((d: any) => ({ value: d.revenue }));
   const txSparkline = monthly_data.map((d: any) => ({ value: d.transactions }));
   const aovSparkline = monthly_data.map((d: any) => ({ value: d.transactions ? d.revenue / d.transactions : 0 }));
@@ -197,30 +182,26 @@ export default function Dashboard() {
           title="Total Revenue" 
           value={currentTotalRevenue} 
           change={comparisonStats?.revChange} 
-          prefix="$" 
+          prefix="₱" 
           format="number"
-          sparklineData={revenueSparkline}
         />
         <MetricCard 
           title="Total Transactions" 
           value={currentTotalTransactions} 
           change={comparisonStats?.txChange} 
           format="number"
-          sparklineData={txSparkline}
         />
         <MetricCard 
           title="Avg Order Value" 
           value={currentAOV} 
           change={comparisonStats?.aovChange} 
-          prefix="$" 
+          prefix="₱" 
           format="decimal"
-          sparklineData={aovSparkline}
         />
         <MetricCard 
           title="Unique Buyers" 
           value={currentUniqueBuyers} 
           format="number"
-          sparklineData={txSparkline}
         />
       </div>
 
@@ -247,7 +228,7 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="flex justify-between items-end mb-1">
                     <div className="text-[10px] uppercase text-gray-400 font-bold">{selectedMonth === 'All' ? 'All' : selectedMonth}</div>
-                    <div className="text-xs font-semibold text-gray-900">${currentTotalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                    <div className="text-xs font-semibold text-gray-900">₱{currentTotalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
                   </div>
                   <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                      <div className="h-full bg-teal-600 rounded-full" style={{ width: `${Math.min(100, (currentTotalRevenue / Math.max(currentTotalRevenue, comparisonStats.prevRevenue)) * 100)}%`}}></div>
@@ -256,7 +237,7 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="flex justify-between items-end mb-1">
                      <div className="text-[10px] uppercase text-gray-400 font-bold">{compareMonth}</div>
-                     <div className="text-xs font-semibold text-gray-900">${comparisonStats.prevRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                     <div className="text-xs font-semibold text-gray-900">₱{comparisonStats.prevRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
                   </div>
                   <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                      <div className="h-full bg-slate-300 rounded-full" style={{ width: `${Math.min(100, (comparisonStats.prevRevenue / Math.max(currentTotalRevenue, comparisonStats.prevRevenue)) * 100)}%`}}></div>
@@ -305,7 +286,7 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="flex justify-between items-end mb-1">
                     <div className="text-[10px] uppercase text-gray-400 font-bold">{selectedMonth === 'All' ? 'All' : selectedMonth}</div>
-                    <div className="text-xs font-semibold text-gray-900">${currentAOV.toFixed(2)}</div>
+                    <div className="text-xs font-semibold text-gray-900">₱{currentAOV.toFixed(2)}</div>
                   </div>
                   <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                      <div className="h-full bg-teal-600 rounded-full" style={{ width: `${Math.min(100, (currentAOV / Math.max(currentAOV, comparisonStats.prevAOV)) * 100)}%`}}></div>
@@ -314,7 +295,7 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="flex justify-between items-end mb-1">
                     <div className="text-[10px] uppercase text-gray-400 font-bold">{compareMonth}</div>
-                    <div className="text-xs font-semibold text-gray-900">${comparisonStats.prevAOV.toFixed(2)}</div>
+                    <div className="text-xs font-semibold text-gray-900">₱{comparisonStats.prevAOV.toFixed(2)}</div>
                   </div>
                   <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                      <div className="h-full bg-slate-300 rounded-full" style={{ width: `${Math.min(100, (comparisonStats.prevAOV / Math.max(currentAOV, comparisonStats.prevAOV)) * 100)}%`}}></div>
@@ -337,10 +318,11 @@ export default function Dashboard() {
               <LineChart data={yoyData} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f8fafc" />
                 <XAxis dataKey="name" tick={{fill: '#94a3b8', fontSize: 12}} axisLine={false} tickLine={false} dy={10} />
-                <YAxis tick={{fill: '#94a3b8', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val/1000}k`} dx={-10} />
+                <YAxis tick={{fill: '#94a3b8', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `₱${val/1000}k`} dx={-10} />
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: '1px solid #f1f5f9', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', padding: '12px', fontSize: '13px', fontWeight: 500 }}
-                  formatter={(value: any, name: any) => [`$${Number(value).toLocaleString()}`, String(name)]}
+                  // @ts-expect-error Recharts internal type issue
+                  formatter={(value: number, name: string | number) => [`₱${value.toLocaleString()}`, String(name)]}
                   cursor={{stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4'}}
                 />
                 <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} iconType="circle" />
@@ -373,7 +355,8 @@ export default function Dashboard() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value: any) => [`$${Number(value).toLocaleString()}`, 'Revenue']}
+                  // @ts-expect-error Recharts internal type issue
+                  formatter={(value: number) => [`₱${value.toLocaleString()}`, 'Revenue']}
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', padding: '10px', fontSize: '13px', fontWeight: 500 }}
                 />
                 <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} iconType="circle" />
@@ -396,10 +379,11 @@ export default function Dashboard() {
               <AreaChart data={locationTrendData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f8fafc" />
                 <XAxis dataKey="month" tick={{fill: '#94a3b8', fontSize: 12}} axisLine={false} tickLine={false} dy={10} tickFormatter={(val) => val.substring(2)} />
-                <YAxis tick={{fill: '#94a3b8', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val/1000}k`} dx={-10} />
+                <YAxis tick={{fill: '#94a3b8', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `₱${val/1000}k`} dx={-10} />
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: '1px solid #f1f5f9', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', padding: '12px', fontSize: '13px', fontWeight: 500 }}
-                  formatter={(value: any, name: any) => [`$${Number(value).toLocaleString()}`, String(name)]}
+                  // @ts-expect-error Recharts internal type issue
+                  formatter={(value: number, name: string | number) => [`₱${value.toLocaleString()}`, String(name)]}
                 />
                 <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} iconType="circle" />
                 <Area type="monotone" dataKey="Website" stackId="1" stroke="#1e3a8a" fill="#1e3a8a" fillOpacity={0.8} />
@@ -472,7 +456,7 @@ export default function Dashboard() {
                       {tx["Location"]}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right font-bold text-gray-900">${tx["Revenue"].toFixed(2)}</td>
+                  <td className="px-6 py-4 text-right font-bold text-gray-900">₱{tx["Revenue"].toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
