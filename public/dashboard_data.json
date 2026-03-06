@@ -1,0 +1,78 @@
+{
+    "monthly_revenue": {
+        "labels": [
+            "2024-11",
+            "2024-12",
+            "2025-01",
+            "2025-02",
+            "2025-03",
+            "2025-04",
+            "2025-05",
+            "2025-06",
+            "2025-07",
+            "2025-08",
+            "2025-09",
+            "2025-10",
+            "2025-11",
+            "2025-12",
+            "2026-01",
+            "2026-02"
+        ],
+        "values": [
+            14410.0,
+            32479.0,
+            66597.0,
+            47331.0,
+            51554.0,
+            25423.0,
+            16684.0,
+            16067.0,
+            14760.0,
+            7734.0,
+            3232.0,
+            3628.0,
+            1648.0,
+            852.0,
+            1025.0,
+            706.0
+        ]
+    },
+    "top_10_items": {
+        "labels": [
+            "Bear",
+            "Blue sparkles",
+            "[\ud83d\udd25ORIGINAL\ud83d\udd25] Emotions",
+            "Halloween cloth 10",
+            "Royal Blue Semi off-shoulder",
+            "Glow",
+            "Colorful",
+            "[SKYLINE FASHION] Flower Tank Top",
+            "Christmas split",
+            "Gold And Black"
+        ],
+        "values": [
+            75460,
+            139,
+            78,
+            76,
+            64,
+            53,
+            40,
+            36,
+            29,
+            28
+        ]
+    },
+    "category_revenue": {
+        "labels": [
+            "Pants",
+            "Shirt",
+            "TShirt"
+        ],
+        "values": [
+            301462.0,
+            2665.0,
+            3.0
+        ]
+    }
+}
